@@ -15,7 +15,11 @@ public class Bank {
         balance += amount;
     }
     
-    public void withdraw(int amount) {
+    public boolean withdraw(int amount) {
+        if (balance < amount) {
+            return false;
+        }
         balance -= amount;
+        return true;
     }
 }

@@ -1,6 +1,15 @@
 package main.java;
 
 public class Farmer {
-    final int COSTPERDAY = 10;
-    final int TASKSPERDAY = 2;
+    public final int COSTPERDAY = 500;
+    public final int TASKSPERDAY = 2;
+    private String name;
+    
+    public Farmer(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return name;
+    }
 }

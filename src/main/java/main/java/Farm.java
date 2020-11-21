@@ -1,14 +1,31 @@
 package main.java;
 
-import java.util.LinkedList;
-
-public class Farm {
+public class Farm implements Component {
     private int acreage;
-    LinkedList<Farmer> farmers;
-    LinkedList<Animal> animals;
-    Bank bank;
+    private Mediator m;
     
-    public Farm(int startBalance) {
-        this.bank = new Bank(startBalance);
+    public Farm() {
+        this.acreage = 1;
     }
+    
+
+    @Override
+    public void setMediator(Mediator mediator) {
+        this.m = mediator;
+    }
+
+    @Override
+    public String getName() {
+        return "Farm";
+    }
+    
+    public int getAcreage() {
+        return acreage;
+    }
+    
+    public void upgradeFarm() {
+        acreage++;
+    }
+    
+    
 }
