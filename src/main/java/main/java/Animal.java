@@ -1,39 +1,48 @@
 package main.java;
 
-public abstract class Animal {
-    protected int cost;
-    protected String animalType;
-    private int age;
-    private String name;
-    
-    public Animal(String name) {
-        this.name = name;
-        this.age = 0;
-    }
-    
-    public Animal(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public int getCost() {
-        return cost;
-    }
-    
-    public int getAge() {
-        return age;
-    }
-    
-    public void incrementAge() {
-        age++;
-    }
-    
-    public String getType() {
-        return animalType;
-    }
-    
+import java.util.ArrayList;
+import java.util.Random;
+
+public interface Animal {
+    public void setPregnant(boolean preg);
+
+    public boolean isPregnant();
+
+    public String getAnimalName();
+
+    public int getCost();
+
+    public int getAge();
+
+    public String getType();
+
+    public void incrementAge();
+
+    public boolean addProduct(int frequency);
+
+    public boolean collectProduct();
+
+    public int getProductSize();
+
+    public boolean tryToGetPregnant(int percentChance);
+
+    public boolean fightOffDisease(int percentChance);
+
+    public void setMediator(Mediator mediator);
+
+    public String getName();
+
+    public void setDiseased(boolean diseased);
+
+    public boolean getDiseased();
+
+    public void setFull(boolean full);
+
+    public boolean getFull();
+
+    public String getProductType();
+
+    public int getProductLimit();
+
+    public ArrayList<Product> getProducts();
 }

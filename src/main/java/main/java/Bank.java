@@ -1,7 +1,8 @@
 package main.java;
 
-public class Bank {
+public class Bank implements Component {
     private int balance;
+    private Mediator m;
     
     public Bank(int initialBalance) {
         balance = initialBalance;
@@ -21,5 +22,15 @@ public class Bank {
         }
         balance -= amount;
         return true;
+    }
+
+    @Override
+    public void setMediator(Mediator mediator) {
+        this.m = mediator;
+    }
+
+    @Override
+    public String getName() {
+        return "Bank";
     }
 }

@@ -1,5 +1,7 @@
 package main.java;
 
 public interface Mediator {
-    public void notify(Component sender, String event);
+    public void nextDay();
+    public void collectProduct(Product p);
+    public void removeAnimal(Animal a);
 }
