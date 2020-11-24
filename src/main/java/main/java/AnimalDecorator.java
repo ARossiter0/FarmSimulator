@@ -2,6 +2,8 @@ package main.java;
 
 import java.util.ArrayList;
 
+import main.java.AnimalFactory.AnimalType;
+
 public class AnimalDecorator implements Animal {
     protected Animal wrappee;
     
@@ -51,7 +53,7 @@ public class AnimalDecorator implements Animal {
     }
 
     @Override
-    public String getType() {
+    public AnimalType getType() {
         return wrappee.getType();
     }
 
@@ -113,5 +115,10 @@ public class AnimalDecorator implements Animal {
     @Override
     public ArrayList<Product> getProducts() {
         return wrappee.getProducts();
+    }
+
+    @Override
+    public String getAnimalType() {
+        return wrappee.getAnimalType();
     }
 }

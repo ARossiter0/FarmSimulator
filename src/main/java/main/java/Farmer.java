@@ -1,8 +1,8 @@
 package main.java;
 
 public class Farmer implements Component {
-    public final int COSTPERDAY = 500;
-    public final int TASKSPERDAY = 2;
+    public static final int COSTPERDAY = 200;
+    public static final int TASKSPERDAY = 2;
     private int tasksDone;
     private String name;
     private Mediator m;

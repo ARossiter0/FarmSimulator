@@ -7,8 +7,11 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 
 
-mainClassName = 'Assignment6.Start'
+mainClassName = 'main.java.Start'
 
+run {
+	standardInput = System.in
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {

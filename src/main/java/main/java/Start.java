@@ -128,7 +128,7 @@ public class Start {
         while (!done) {
             System.out.println("You have " + farmManager.getNumFarmers() + " farmers\n"
                     + "-------------------------------------------------------------\n"
-                    + "Farmers cost 500 Schrute bucks a day\n" + "Farmers can perform 2 tasks per day\n"
+                    + "Farmers cost 200 Schrute bucks a day\n" + "Farmers can perform 2 tasks per day\n"
                     + "Tasks include:\n" + " -Collecting animal product\n" + " -Assisting in animal birth\n"
                     + "If you cannot pay them, they will quit\n" + "\n"
                     + "Press 1 to hire new Farmer, 2 if you are done");
@@ -190,7 +190,7 @@ public class Start {
             Farmer farmer = farmManager.getFarmer(name);
             if (farmer == null) {
                 System.out.println("Farmer not found");
-            } else if (farmer.getTasksDone() == farmer.TASKSPERDAY) {
+            } else if (farmer.getTasksDone() == Farmer.TASKSPERDAY) {
                 System.out.println("This farmer has no more tasks left\n");
             } else {
                 doTask(farmer);
@@ -202,7 +202,7 @@ public class Start {
         boolean done = false;
         while (!done) {
             System.out.println("Which task would you like " + farmer.getFarmerName() + " to do?\n"
-                    + "Tasks left: " + (farmer.TASKSPERDAY - farmer.getTasksDone()) + "\n"
+                    + "Tasks left: " + (Farmer.TASKSPERDAY - farmer.getTasksDone()) + "\n"
                     + "-------------------------------------------------------------\n"
                     + "1. Collect product from animal\n"
                     + "2. Train animal (Add affinity)\n");
@@ -215,6 +215,10 @@ public class Start {
                 option = Integer.parseInt(in.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input, try again");
+            }
+            if (farmer.getTasksDone() == Farmer.TASKSPERDAY) {
+                System.out.println("This farmer has no more tasks left\n");
+                option = 4;
             }
             switch (option) {
             case 1:
@@ -229,7 +233,12 @@ public class Start {
                 break;
             case 3:
                 if (farmManager.hasPregnantAnimals()) {
-                    
+                    if (assistBirth()) {
+                        farmer.doTask();
+                    } else {
+                        System.out.println("You did not have room on your farm for a new animal \n"
+                                + "You sold it for 200 Schrute bucks");                        
+                    }
                 } else {
                     System.out.println("Invalid input, try again");
                 }
@@ -239,6 +248,28 @@ public class Start {
                 break;
             }
         }
+    }
+    
+    public static boolean assistBirth() {
+        System.out.println("-------------------------------------------------------------\n" 
+                + farmManager.getPregnantAnimals() + "\n" 
+                + "-------------------------------------------------------------\n"
+                + "Enter the name of the animal you would like to help give birth\n"
+                + "Type done to exit");
+                String name = in.nextLine();
+                if (name.toLowerCase().equals("done")) {
+                    return false;
+                }
+                Animal animal = farmManager.getAnimal(name);
+                if (animal == null) {
+                    System.out.println("Animal not found");
+                } else if (farmManager.animalBorn(animal, animal.getAnimalName() + " jr.")) {
+                    System.out.println("Congratulations " + animal.getAnimalName() + " jr. has been born");
+                    return true;
+                } else {
+                    return false;
+                }
+                return false;
     }
     
     public static boolean addAffinity() {
@@ -255,7 +286,7 @@ public class Start {
         if (animal == null) {
             System.out.println("Animal not found");
         } else {
-            System.out.println("Adding affinity to: " + animal.getAnimalName() + " the " + animal.getType() + "\n"
+            System.out.println("Adding affinity to: " + animal.getAnimalName() + " the " + animal.getAnimalType() + "\n"
                     + "-------------------------------------------------------------\n"
                     + "Available affinities: \n"
                     + "1. Immunity (Less chance to die from disease)\n"
@@ -270,15 +301,15 @@ public class Start {
             switch (option) {
             case 1: 
                 farmManager.addAffinity(animal, "immunity");
-                System.out.println(animal.getAnimalName() + " the " + animal.getType() + " now has immunity");
+                System.out.println(animal.getAnimalName() + " the " + animal.getAnimalType() + " now has immunity");
                 return true;
             case 2:
                 farmManager.addAffinity(animal, "increase_production");
-                System.out.println(animal.getAnimalName() + " the " + animal.getType() + " is now ambitious");
+                System.out.println(animal.getAnimalName() + " the " + animal.getAnimalType() + " is now ambitious");
                 return true;
             case 3:
                 farmManager.addAffinity(animal, "inheat");
-                System.out.println(animal.getAnimalName() + " the " + animal.getType() + " is now in heat");
+                System.out.println(animal.getAnimalName() + " the " + animal.getAnimalType() + " is now in heat");
                 return true;
             }
         }
@@ -302,7 +333,7 @@ public class Start {
             System.out.println("Collected " + animal.getProductType() + " from " + animal.getAnimalName());
             return true;
         } else {
-            System.out.println(animal.getAnimalName() + " the " + animal.getType() + " has no " + animal.getProductType() + " to collect");
+            System.out.println(animal.getAnimalName() + " the " + animal.getAnimalType() + " has no " + animal.getProductType() + " to collect");
             return false;
         }
         return false;
@@ -316,13 +347,14 @@ public class Start {
                         + "-------------------------------------------------------------\n");             
                 farmManager.nextDay();
                 dayStarted = true;
+                
             }
             System.out.println("-------------------------------------------------------------\n");
             System.out.println("Animal Status:");
             System.out.println(farmManager.getAnimalInfo());
             System.out.println("Farmers " + farmManager.getNumFarmers());
             System.out.println("-------------------------------------------------------------\n");
-            System.out.println("What would you like to do?\n"
+            System.out.println("What would you like to do? | Balance: " + farmManager.getBalance() + "\n"
                     + "1. Buy animals\n"
                     + "2. Hire farmer\n"
                     + "3. Fire farmer\n"
@@ -352,6 +384,10 @@ public class Start {
                 dayTime();
                 break;
             }
+        }
+        if (farmManager.getBalance() == 100000) {
+            gameStarted = false;
+            System.out.println("You WIN!");
         }
     }
 }

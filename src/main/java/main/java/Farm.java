@@ -10,7 +10,7 @@ public class Farm implements Component {
     
     public Farm() {
         this.acreage = 1;
-        this.upgradeCost = 5000;
+        this.upgradeCost = 1000;
         this.products = new ArrayList<>();
     }
     

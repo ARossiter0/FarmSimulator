@@ -3,6 +3,8 @@ package main.java;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.java.AnimalFactory.AnimalType;
+
 public interface Animal {
     public void setPregnant(boolean preg);
 
@@ -14,7 +16,7 @@ public interface Animal {
 
     public int getAge();
 
-    public String getType();
+    public AnimalType getType();
 
     public void incrementAge();
 
@@ -45,4 +47,6 @@ public interface Animal {
     public int getProductLimit();
 
     public ArrayList<Product> getProducts();
+    
+    public String getAnimalType();
 }

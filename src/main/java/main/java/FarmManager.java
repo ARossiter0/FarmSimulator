@@ -45,39 +45,39 @@ public class FarmManager implements Mediator {
         return true;
     }
     
-    public int getNumAnimalType(String type) {
-        if (type.equals("Pig")) {
+    public int getNumAnimalType(AnimalType type) {
+        if (type.equals(AnimalType.PIG)) {
             return numPigs;
         }
-        if (type.equals("Sheep")) {
+        if (type.equals(AnimalType.SHEEP)) {
             return numSheep;
         }
-        if (type.equals("Cow")) {
+        if (type.equals(AnimalType.COW)) {
             return numCows;
         }
         return 0;
     }
     
-    public void incrementAnimalType(String type) {
-        if (type.equals("Pig")) {
+    public void incrementAnimalType(AnimalType type) {
+        if (type.equals(AnimalType.PIG)) {
             numPigs++;
         }
-        if (type.equals("Sheep")) {
+        if (type.equals(AnimalType.SHEEP)) {
             numSheep++;
         }
-        if (type.equals("Cow")) {
+        if (type.equals(AnimalType.COW)) {
             numCows++;
         }
     }
     
-    public void decrementAnimalType(String type) {
-        if (type.equals("Pig")) {
+    public void decrementAnimalType(AnimalType type) {
+        if (type.equals(AnimalType.PIG)) {
             numPigs--;
         }
-        if (type.equals("Sheep")) {
+        if (type.equals(AnimalType.SHEEP)) {
             numSheep--;
         }
-        if (type.equals("Cow")) {
+        if (type.equals(AnimalType.COW)) {
             numCows--;
         }
     }
@@ -118,7 +118,7 @@ public class FarmManager implements Mediator {
     public String getAnimalInfo() {
         String animalString = "";
         for (Animal a : animals) {
-            animalString += a.getType() + ": " + a.getAnimalName() + " ";
+            animalString += a.getAnimalType() + ": " + a.getAnimalName() + " ";
             if (a.getDiseased()) {
                 animalString += "(Diseased) ";
             }
@@ -173,12 +173,7 @@ public class FarmManager implements Mediator {
         System.out.println("You have sold:\n" + wool + " bolts of wool\n" + milk + " gallons of milk\n" + truffles
                 + " truffles\n\n" + "Total Profit: " + total + " Schrute bucks\n\n");
 
-        // Determine if farm can be upgraded
-        if (bank.getBalance() >= farm.getUpgradeCost() * 1.20) {
-            farm.upgradeFarm();
-            System.out.println("Your farm has been upgraded for " + farm.getUpgradeCost() + "\n" + "You now have "
-                    + farm.getAcreage() + " acres!");
-        }
+        
 
         // Update animals
         for (Animal a : animals) {
@@ -186,7 +181,7 @@ public class FarmManager implements Mediator {
             if (a.isPregnant()) {
                 removeAnimal(a);
                 System.out.println(
-                        a.getAnimalName() + " the " + a.getType() + " died in the night in child birth");
+                        a.getAnimalName() + " the " + a.getAnimalType() + " died in the night in child birth");
             }
             
             // Check age to apply disease
@@ -194,7 +189,7 @@ public class FarmManager implements Mediator {
                 // If animal did not fight off disease
                 if (!a.fightOffDisease(20)) {
                     System.out.println(
-                            a.getAnimalName() + " the " + a.getType() + " died in the night due to its disease");
+                            a.getAnimalName() + " the " + a.getAnimalType() + " died in the night due to its disease");
                 }
             }
             
@@ -208,10 +203,10 @@ public class FarmManager implements Mediator {
             // If there are more than one of this type of animal and animal is not diseased
             if (getNumAnimalType(a.getType()) > 1 && !a.getDiseased()) {
                 // This animal has base 50 percent chance to get pregnant
-                if (a.tryToGetPregnant(50)) {
+                if (a.tryToGetPregnant(20)) {
                     hasPregnant = true;
                     System.out.println(
-                            a.getAnimalName() + " the " + a.getType() + " became pregnant!\n"
+                            a.getAnimalName() + " the " + a.getAnimalType() + " became pregnant!\n"
                                     + "Send a farmer to care for them or they will die in childbirth");
                 }
             }
@@ -219,14 +214,30 @@ public class FarmManager implements Mediator {
             
             // Adds product to animal and returns false if animal cannot produce this day for some reason
             if (a.addProduct(2)) {
-                System.out.println(a.getAnimalName() + " the " + a.getType() + " produced " + a.getProductType() + " today");
+                System.out.println(a.getAnimalName() + " the " + a.getAnimalType() + " produced " + a.getProductType() + " today");
+            }
+            
+            // Determine if farm can be upgraded
+            if (bank.getBalance() >= farm.getUpgradeCost() * 1.20) {
+                System.out.println("Your farm has been upgraded for " + farm.getUpgradeCost() + "\n" + "You now have "
+                        + farm.getAcreage() + " acres!");
+                bank.withdraw(farm.getUpgradeCost());
+                farm.upgradeFarm();
+                
             }
         }
         
         // Update farmers
         for (Farmer f : farmers) {
             f.resetTasks();
+            if (bank.withdraw(Farmer.COSTPERDAY)) {
+                System.out.println("You payed farmer " + f.getFarmerName() + " " + Farmer.COSTPERDAY);
+            } else {
+                System.out.println("You could not pay farmer " + f.getFarmerName() + " and he quit");
+                farmers.remove(f);
+            }
         }
+        
     }
     
     public int getTicks() {
@@ -241,6 +252,31 @@ public class FarmManager implements Mediator {
             }
         }
         return null;
+    }
+    
+    public String getPregnantAnimals() {
+        for (Animal a : animals) {
+            if (a.isPregnant()) {
+                return a.getAnimalName() + "\n";
+            }
+        }
+        return null;
+    }
+    
+    public boolean animalBorn(Animal animal, String name) {
+        AnimalFactory market = new AnimalFactory();
+
+        int limit = farm.getAcreage() * 4;
+        if (animals.size() == limit) {
+            bank.deposit(200);
+            return false;
+        }
+        animal.setPregnant(false);
+        Animal newAnimal = market.getAnimal(name, animal.getType(), true);
+        incrementAnimalType(newAnimal.getType());
+        newAnimal.setMediator(this);
+        animals.add(newAnimal);
+        return true;
     }
     
     public Animal getAnimal(String name) {

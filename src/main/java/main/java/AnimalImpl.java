@@ -3,9 +3,11 @@ package main.java;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.java.AnimalFactory.AnimalType;
+
 public abstract class AnimalImpl implements Component, Animal {
     protected int cost;
-    protected String animalType;
+    protected AnimalType animalType;
     protected ArrayList<Product> products;
     protected String productType;
     protected int productLimit;
@@ -49,7 +51,7 @@ public abstract class AnimalImpl implements Component, Animal {
         return age;
     }
     
-    public String getType() {
+    public AnimalType getType() {
         return animalType;
     }
     
@@ -111,7 +113,7 @@ public abstract class AnimalImpl implements Component, Animal {
     @Override
     public boolean fightOffDisease(int percentChance) {
         Random ran = new Random(System.nanoTime());
-        if (ran.nextInt(100) < 20) {
+        if (ran.nextInt(100) < percentChance) {
             m.removeAnimal(this);
             return false;
         }
@@ -162,6 +164,19 @@ public abstract class AnimalImpl implements Component, Animal {
     
     public boolean hasAffinity() {
         return hasAffinity;
+    }
+    
+    public String getAnimalType() {
+        if (animalType == AnimalType.COW) {
+            return "cow";
+        }
+        if (animalType == AnimalType.PIG) {
+            return "pig";
+        }
+        if (animalType == AnimalType.SHEEP) {
+            return "sheep";
+        }
+        return null;
     }
     
 }
